@@ -32,7 +32,7 @@ import {
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { DateRange } from "react-day-picker";
-import { addDays, format } from "date-fns";
+import { format } from "date-fns";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 
@@ -211,7 +211,11 @@ export function DataTable({ data }: DataTableProps) {
               </div>
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" size="sm">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="cursor-pointer"
+                  >
                     <Filter className="w-4 h-4 mr-2" />
                     Filter
                     {(dateRange?.from ||
@@ -308,7 +312,7 @@ export function DataTable({ data }: DataTableProps) {
                   </div>
                 </PopoverContent>
               </Popover>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className="cursor-pointer">
                 <Download className="w-4 h-4 mr-2" />
                 Export
               </Button>

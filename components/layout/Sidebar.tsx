@@ -71,8 +71,8 @@ export function Sidebar({
                 transition={{ delay: 0.1 }}
                 className="flex items-center space-x-2"
               >
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                  <BarChart3 className="w-5 h-5 text-white" />
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center">
+                  <BarChart3 className="w-6 h-6 font-bold text-blue-600 dark:text-white" />
                 </div>
                 {/* <span className="text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                   InsightHub
@@ -103,13 +103,13 @@ export function Sidebar({
                 transition={{ delay: index * 0.05 }}
               >
                 <Button
-                  variant={item.active ? "default" : "ghost"}
+                  variant={item.active ? "outline" : "ghost"}
                   className={cn(
-                    "w-full justify-start h-12 text-left",
+                    "w-full justify-start h-12 text-left transition-all duration-200 cursor-pointer",
                     isCollapsed ? "px-3" : "px-4",
                     item.active
-                      ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg"
-                      : "hover:bg-gray-100 dark:hover:bg-gray-800"
+                      ? "text-slate-800 dark:text-slate-50"
+                      : "hover:shadow hover:bg-slate-100"
                   )}
                 >
                   <item.icon
@@ -132,7 +132,7 @@ export function Sidebar({
               className="p-4 border-t border-gray-200 dark:border-gray-800"
             >
               <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full bg-slate-800 dark:text-slate-50 text-slate-50 flex items-center justify-center">
                   <span className="text-sm font-medium text-white">D</span>
                 </div>
                 <div className="flex-1 min-w-0">

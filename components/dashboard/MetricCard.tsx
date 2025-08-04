@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { MetricData } from "@/types/dashboard";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
+import { FollowerPointerCard } from "../ui/following-pointer";
 
 interface MetricCardProps {
   metric: MetricData;
@@ -77,55 +78,70 @@ export function MetricCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 }}
-      whileHover={{ y: -4, scale: 1.02 }}
-      className="group"
+      whileHover={{ y: -4 }}
+      className="group relative"
     >
-      <Card className="bg-white/60 backdrop-blur-sm border-gray-200 dark:bg-gray-800/60 dark:border-gray-700 hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300">
-        <CardContent className="p-6">
-          <div className="flex items-start justify-between">
-            <div className="space-y-4 flex-1">
-              <div className="flex items-center space-x-2">
-                <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
-                  {metric.title}
-                </h3>
+      {/* Grid Background - Added this div */}
+      <div
+        className={cn(
+          "absolute inset-0 -z-10 rounded-lg overflow-hidden",
+          "[background-size:20px_20px]",
+          "[background-image:linear-gradient(to_right,#d1d1d6_1px,transparent_1px),linear-gradient(to_bottom,#d1d1d6_1px,transparent_1px)]",
+          "dark:[background-image:linear-gradient(to_right,#262626_1px,transparent_10%),linear-gradient(to_bottom,#262626_1px,transparent_10%)]",
+          "bg-white dark:bg-black"
+        )}
+      />
+
+      {/* Radial gradient overlay - Added this div */}
+      <div className="absolute inset-0 -z-10 rounded-lg overflow-hidden [mask-image:radial-gradient(ellipse_at_center,transparent_70%,black)] bg-transparent" />
+
+      <FollowerPointerCard title={metric.title}>
+        <Card className="bg-white/90 border-gray-200 dark:bg-gray-900/90 dark:border-gray-700 hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300">
+          <CardContent className="p-6">
+            <div className="flex items-start justify-between">
+              <div className="space-y-4 flex-1">
+                <div className="flex items-center space-x-2">
+                  <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
+                    {metric.title}
+                  </h3>
+                </div>
+
+                <motion.div
+                  key={metric.value}
+                  initial={{ scale: 1.1 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: 0.3 }}
+                  className="text-3xl font-bold text-gray-900 dark:text-white"
+                >
+                  {formatValue(metric.value)}
+                </motion.div>
+
+                <div
+                  className={cn("flex items-center space-x-1", getTrendColor())}
+                >
+                  {getTrendIcon()}
+                  <span className="text-sm font-medium">
+                    {metric.change > 0 ? "+" : ""}
+                    {metric.change}%
+                  </span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                    vs last month
+                  </span>
+                </div>
               </div>
 
               <motion.div
-                key={metric.value}
-                initial={{ scale: 1.1 }}
-                animate={{ scale: 1 }}
-                transition={{ duration: 0.3 }}
-                className="text-3xl font-bold text-gray-900 dark:text-white"
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                className="w-12 h-12 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow"
               >
-                {formatValue(metric.value)}
+                <div style={{ color: metric.color }} className={`w-6 h-6`}>
+                  <metric.icon />
+                </div>
               </motion.div>
-
-              <div
-                className={cn("flex items-center space-x-1", getTrendColor())}
-              >
-                {getTrendIcon()}
-                <span className="text-sm font-medium">
-                  {metric.change > 0 ? "+" : ""}
-                  {metric.change}%
-                </span>
-                <span className="text-xs text-gray-500 dark:text-gray-400">
-                  vs last month
-                </span>
-              </div>
             </div>
-
-            <motion.div
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow"
-            >
-              <div className="w-6 h-6 text-white">
-                {/* Icon would be rendered here based on metric.icon */}
-                <TrendingUp className="w-6 h-6" />
-              </div>
-            </motion.div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </FollowerPointerCard>
     </motion.div>
   );
 }

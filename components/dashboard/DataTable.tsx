@@ -282,7 +282,7 @@ export function DataTable({ data }: DataTableProps) {
                         variant="ghost"
                         size="sm"
                         onClick={resetFilters}
-                        className="text-xs h-6 px-2"
+                        className="text-xs h-6 px-2 cursor-pointer"
                       >
                         Reset
                       </Button>
@@ -301,9 +301,9 @@ export function DataTable({ data }: DataTableProps) {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="w-full justify-start text-left font-normal"
+                            className="w-full justify-start text-left font-normal cursor-pointer"
                           >
-                            <CalendarIcon className="w-4 h-4 mr-2" />
+                            <CalendarIcon className="w-4 h-4 mr-2 cursor-pointer" />
                             {dateRange?.from ? (
                               dateRange.to ? (
                                 <>
@@ -325,6 +325,7 @@ export function DataTable({ data }: DataTableProps) {
                             onSelect={setDateRange}
                             numberOfMonths={1}
                             onDayClick={() => setIsDatePickerOpen(false)}
+                            className="cursor-pointer"
                           />
                         </PopoverContent>
                       </Popover>
@@ -347,10 +348,11 @@ export function DataTable({ data }: DataTableProps) {
                               onCheckedChange={() =>
                                 handleChannelToggle(channel)
                               }
+                              className="cursor-pointer"
                             />
                             <Label
                               htmlFor={`channel-${channel}`}
-                              className="text-sm"
+                              className="text-sm cursor-pointer"
                             >
                               {channel}
                             </Label>
@@ -472,49 +474,67 @@ export function DataTable({ data }: DataTableProps) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {paginatedData.map((row, index) => (
+                {paginatedData.length > 0 ? (
+                  paginatedData.map((row, index) => (
+                    <motion.tr
+                      key={row.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                    >
+                      <TableCell className="font-medium">
+                        {new Date(row.date).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </TableCell>
+                      <TableCell className="max-w-48 truncate">
+                        {row.campaign}
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={getChannelBadgeVariant(row.channel)}
+                          className="text-xs"
+                        >
+                          {row.channel}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {new Intl.NumberFormat("en-US").format(row.impressions)}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {new Intl.NumberFormat("en-US").format(row.clicks)}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {formatPercentage(row.ctr)}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {row.conversions}
+                      </TableCell>
+                      <TableCell className="text-right font-medium">
+                        {formatCurrency(row.revenue)}
+                      </TableCell>
+                    </motion.tr>
+                  ))
+                ) : (
                   <motion.tr
-                    key={row.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="h-[200px]"
                   >
-                    <TableCell className="font-medium">
-                      {new Date(row.date).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
-                    </TableCell>
-                    <TableCell className="max-w-48 truncate">
-                      {row.campaign}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={getChannelBadgeVariant(row.channel)}
-                        className="text-xs"
-                      >
-                        {row.channel}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {new Intl.NumberFormat("en-US").format(row.impressions)}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {new Intl.NumberFormat("en-US").format(row.clicks)}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {formatPercentage(row.ctr)}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {row.conversions}
-                    </TableCell>
-                    <TableCell className="text-right font-medium">
-                      {formatCurrency(row.revenue)}
+                    <TableCell colSpan={8} className="text-center py-10">
+                      <div className="flex flex-col items-center justify-center space-y-2">
+                        <Search className="w-12 h-12 text-gray-400" />
+                        <p className="text-gray-500 text-lg">No data found</p>
+                        <p className="text-gray-400 text-sm">
+                          Try adjusting your filters or search query
+                        </p>
+                      </div>
                     </TableCell>
                   </motion.tr>
-                ))}
+                )}
               </TableBody>
             </Table>
           </div>

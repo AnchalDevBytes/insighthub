@@ -1,12 +1,15 @@
+import { LucideIcon } from "lucide-react";
+
 export interface MetricData {
   id: string;
   title: string;
   value: number;
   change: number;
   trend: "up" | "down" | "neutral";
-  icon: string;
+  icon: LucideIcon;
   prefix?: string;
   suffix?: string;
+  color?: string;
 }
 
 export interface ChartDataPoint {

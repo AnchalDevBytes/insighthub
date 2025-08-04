@@ -1,7 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { BarChart3, PanelLeftOpen, PanelLeftClose } from "lucide-react";
+import {
+  BarChart3,
+  PanelLeftOpen,
+  PanelLeftClose,
+  LucideIcon,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -12,7 +17,7 @@ interface SidebarProps {
 }
 
 interface NavigationItem {
-  icon: any;
+  icon: LucideIcon;
   label: string;
   href: string;
   active?: boolean;

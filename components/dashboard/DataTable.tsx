@@ -21,9 +21,20 @@ import {
   ArrowDown,
   Download,
   Filter,
+  CalendarIcon,
 } from "lucide-react";
 import { TableData } from "@/types/dashboard";
 import { cn } from "@/lib/utils";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { DateRange } from "react-day-picker";
+import { addDays, format } from "date-fns";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 interface DataTableProps {
   data: TableData[];
@@ -39,13 +50,46 @@ export function DataTable({ data }: DataTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
+  // filter states
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: undefined,
+    to: undefined,
+  });
+  const [selectedChannels, setSelectedChannels] = useState<string[]>([]);
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+
+  // Get all unique channels for filter options
+  const allChannels = useMemo(() => {
+    const channels = new Set<string>();
+    data.forEach((item) => channels.add(item.channel));
+    return Array.from(channels);
+  }, [data]);
+
   const filteredAndSortedData = useMemo(() => {
-    const filtered = data.filter((item) =>
+    let filtered = data.filter((item) =>
       Object.values(item).some((value) =>
         value.toString().toLowerCase().includes(searchTerm.toLowerCase())
       )
     );
 
+    // date range filter
+    if (dateRange?.from || dateRange?.to) {
+      filtered = filtered.filter((item) => {
+        const itemDate = new Date(item.date);
+        if (dateRange.from && itemDate < dateRange.from) return false;
+        if (dateRange.to && itemDate > dateRange.to) return false;
+        return true;
+      });
+    }
+
+    // channel filter
+    if (selectedChannels.length > 0) {
+      filtered = filtered.filter((item) =>
+        selectedChannels.includes(item.channel)
+      );
+    }
+
+    // Sorting
     if (sortField && sortDirection) {
       filtered.sort((a, b) => {
         const aValue = a[sortField];
@@ -67,7 +111,7 @@ export function DataTable({ data }: DataTableProps) {
     }
 
     return filtered;
-  }, [data, searchTerm, sortField, sortDirection]);
+  }, [data, searchTerm, sortField, sortDirection, dateRange, selectedChannels]);
 
   const paginatedData = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -130,6 +174,19 @@ export function DataTable({ data }: DataTableProps) {
     return variants[channel] || "outline";
   };
 
+  const handleChannelToggle = (channel: string) => {
+    setSelectedChannels((prev) =>
+      prev.includes(channel)
+        ? prev.filter((c) => c !== channel)
+        : [...prev, channel]
+    );
+  };
+
+  const resetFilters = () => {
+    setDateRange({ from: undefined, to: undefined });
+    setSelectedChannels([]);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -152,10 +209,105 @@ export function DataTable({ data }: DataTableProps) {
                   className="pl-10 w-64 bg-gray-50 dark:bg-gray-800"
                 />
               </div>
-              <Button variant="outline" size="sm">
-                <Filter className="w-4 h-4 mr-2" />
-                Filter
-              </Button>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <Filter className="w-4 h-4 mr-2" />
+                    Filter
+                    {(dateRange?.from ||
+                      dateRange?.to ||
+                      selectedChannels.length > 0) && (
+                      <span className="ml-2 w-2 h-2 rounded-full bg-blue-500"></span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80 p-4" align="end">
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-medium">Filters</h3>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={resetFilters}
+                        className="text-xs h-6 px-2"
+                      >
+                        Reset
+                      </Button>
+                    </div>
+
+                    {/* Date Range Filter */}
+                    <div>
+                      <Label className="block mb-2 text-sm font-medium">
+                        Date Range
+                      </Label>
+                      <Popover
+                        open={isDatePickerOpen}
+                        onOpenChange={setIsDatePickerOpen}
+                      >
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full justify-start text-left font-normal"
+                          >
+                            <CalendarIcon className="w-4 h-4 mr-2" />
+                            {dateRange?.from ? (
+                              dateRange.to ? (
+                                <>
+                                  {format(dateRange.from, "MMM dd")} -{" "}
+                                  {format(dateRange.to, "MMM dd, yyyy")}
+                                </>
+                              ) : (
+                                format(dateRange.from, "MMM dd, yyyy")
+                              )
+                            ) : (
+                              <span>Pick a date range</span>
+                            )}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="range"
+                            selected={dateRange}
+                            onSelect={setDateRange}
+                            numberOfMonths={1}
+                            onDayClick={() => setIsDatePickerOpen(false)}
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+
+                    {/* Channel Filter */}
+                    <div>
+                      <Label className="block mb-2 text-sm font-medium">
+                        Channels
+                      </Label>
+                      <div className="space-y-2">
+                        {allChannels.map((channel) => (
+                          <div
+                            key={channel}
+                            className="flex items-center space-x-2"
+                          >
+                            <Checkbox
+                              id={`channel-${channel}`}
+                              checked={selectedChannels.includes(channel)}
+                              onCheckedChange={() =>
+                                handleChannelToggle(channel)
+                              }
+                            />
+                            <Label
+                              htmlFor={`channel-${channel}`}
+                              className="text-sm"
+                            >
+                              {channel}
+                            </Label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
               <Button variant="outline" size="sm">
                 <Download className="w-4 h-4 mr-2" />
                 Export

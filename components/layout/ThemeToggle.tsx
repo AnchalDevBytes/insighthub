@@ -37,7 +37,7 @@ export function ThemeToggle() {
           scale: theme === "dark" ? 0 : 1,
         }}
         transition={{ duration: 0.3 }}
-        className="absolute inset-0 flex items-center justify-center"
+        className="absolute inset-0 flex items-center justify-center cursor-pointer"
       >
         <Sun className="w-4 h-4" />
       </motion.div>
@@ -49,7 +49,7 @@ export function ThemeToggle() {
           scale: theme === "light" ? 0 : 1,
         }}
         transition={{ duration: 0.3 }}
-        className="absolute inset-0 flex items-center justify-center"
+        className="absolute inset-0 flex items-center justify-center cursor-pointer"
       >
         <Moon className="w-4 h-4" />
       </motion.div>

@@ -72,7 +72,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-purple-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <div className="flex h-screen">
         <Sidebar
           isCollapsed={isCollapsed}

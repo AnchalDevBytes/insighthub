@@ -1,18 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-  BarChart3,
-  Users,
-  TrendingUp,
-  Database,
-  Settings,
-  Menu,
-  X,
-  Home,
-  PieChart,
-  Target,
-} from "lucide-react";
+import { BarChart3, PanelLeftOpen, PanelLeftClose } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -22,15 +11,16 @@ interface SidebarProps {
   isMobile?: boolean;
 }
 
-const navigationItems = [
-  { icon: Home, label: "Dashboard", href: "/", active: true },
-  { icon: BarChart3, label: "Analytics", href: "/analytics" },
-  { icon: PieChart, label: "Reports", href: "/reports" },
-  { icon: Users, label: "Audience", href: "/audience" },
-  { icon: Target, label: "Campaigns", href: "/campaigns" },
-  { icon: TrendingUp, label: "Growth", href: "/growth" },
-  { icon: Database, label: "Data Sources", href: "/data-sources" },
-  { icon: Settings, label: "Settings", href: "/settings" },
+interface NavigationItem {
+  icon: any;
+  label: string;
+  href: string;
+  active?: boolean;
+  disabled?: boolean;
+}
+
+const navigationItems: NavigationItem[] = [
+  { icon: BarChart3, label: "Analytics Dashboard", href: "/", active: true },
 ];
 
 export function Sidebar({
@@ -79,21 +69,21 @@ export function Sidebar({
                 <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
                   <BarChart3 className="w-5 h-5 text-white" />
                 </div>
-                <span className="text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                {/* <span className="text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                   InsightHub
-                </span>
+                </span> */}
               </motion.div>
             )}
             <Button
               variant="ghost"
               size="sm"
               onClick={onToggle}
-              className="p-2"
+              className="p-2 cursor-pointer"
             >
               {isCollapsed ? (
-                <Menu className="w-4 h-4" />
+                <PanelLeftOpen className="w-4 h-4" />
               ) : (
-                <X className="w-4 h-4" />
+                <PanelLeftClose className="w-4 h-4" />
               )}
             </Button>
           </div>
@@ -138,14 +128,14 @@ export function Sidebar({
             >
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                  <span className="text-sm font-medium text-white">JD</span>
+                  <span className="text-sm font-medium text-white">D</span>
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                    John Doe
+                    Dummy
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                    john@company.com
+                    dummy@gmail.com
                   </p>
                 </div>
               </div>

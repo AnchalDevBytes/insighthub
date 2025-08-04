@@ -22,6 +22,8 @@ import {
   Download,
   Filter,
   CalendarIcon,
+  FileJson,
+  FileText,
 } from "lucide-react";
 import { TableData } from "@/types/dashboard";
 import { cn } from "@/lib/utils";
@@ -187,6 +189,53 @@ export function DataTable({ data }: DataTableProps) {
     setSelectedChannels([]);
   };
 
+  const exportData = (format: "json" | "csv") => {
+    const dataToExport = filteredAndSortedData;
+
+    if (format === "json") {
+      const jsonStr = JSON.stringify(dataToExport, null, 2);
+      const blob = new Blob([jsonStr], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `campaign-data-${new Date().toISOString()}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } else if (format === "csv") {
+      // Convert to CSV
+      const headers = Object.keys(dataToExport[0] || []);
+      const csvRows = [];
+
+      // Add headers
+      csvRows.push(headers.join(","));
+
+      // Add data rows
+      for (const row of dataToExport) {
+        const values = headers.map((header) => {
+          const escaped = ("" + row[header as keyof TableData]).replace(
+            /"/g,
+            '\\"'
+          );
+          return `"${escaped}"`;
+        });
+        csvRows.push(values.join(","));
+      }
+
+      const csvStr = csvRows.join("\n");
+      const blob = new Blob([csvStr], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `campaign-data-${new Date().toISOString()}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -312,10 +361,42 @@ export function DataTable({ data }: DataTableProps) {
                   </div>
                 </PopoverContent>
               </Popover>
-              <Button variant="outline" size="sm" className="cursor-pointer">
-                <Download className="w-4 h-4 mr-2" />
-                Export
-              </Button>
+
+              {/* Export Button */}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="cursor-pointer"
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Export
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-40 p-2" align="end">
+                  <div className="space-y-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start cursor-pointer"
+                      onClick={() => exportData("json")}
+                    >
+                      <FileJson className="w-4 h-4 mr-2" />
+                      JSON
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start cursor-pointer"
+                      onClick={() => exportData("csv")}
+                    >
+                      <FileText className="w-4 h-4 mr-2" />
+                      CSV
+                    </Button>
+                  </div>
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
         </CardHeader>

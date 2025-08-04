@@ -24,6 +24,8 @@ import {
   CalendarIcon,
   FileJson,
   FileText,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { TableData } from "@/types/dashboard";
 import { cn } from "@/lib/utils";
@@ -255,7 +257,7 @@ export function DataTable({ data }: DataTableProps) {
                   placeholder="Search campaigns..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 w-64 bg-gray-50 dark:bg-gray-800"
+                  className="pl-10 md:w-64 bg-gray-50 dark:bg-gray-800"
                 />
               </div>
               <Popover>
@@ -265,7 +267,7 @@ export function DataTable({ data }: DataTableProps) {
                     size="sm"
                     className="cursor-pointer"
                   >
-                    <Filter className="w-4 h-4 mr-2" />
+                    <Filter className="hidden md:inline-block w-4 h-4 mr-2" />
                     Filter
                     {(dateRange?.from ||
                       dateRange?.to ||
@@ -372,7 +374,7 @@ export function DataTable({ data }: DataTableProps) {
                     size="sm"
                     className="cursor-pointer"
                   >
-                    <Download className="w-4 h-4 mr-2" />
+                    <Download className="hidden md:inline-blockw-4 h-4 mr-2" />
                     Export
                   </Button>
                 </PopoverTrigger>
@@ -542,7 +544,7 @@ export function DataTable({ data }: DataTableProps) {
           {/* Pagination */}
           {totalPages > 1 && (
             <div className="flex items-center justify-between mt-6">
-              <div className="text-sm text-gray-600 dark:text-gray-400">
+              <div className="hidden md:inline-block text-sm text-gray-600 dark:text-gray-400">
                 Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
                 {Math.min(
                   currentPage * itemsPerPage,
@@ -558,8 +560,9 @@ export function DataTable({ data }: DataTableProps) {
                     setCurrentPage((prev) => Math.max(prev - 1, 1))
                   }
                   disabled={currentPage === 1}
+                  className="cursor-pointer"
                 >
-                  Previous
+                  <ChevronLeft className="w-4 h-4" />
                 </Button>
                 {Array.from({ length: totalPages }, (_, i) => i + 1)
                   .filter(
@@ -578,7 +581,7 @@ export function DataTable({ data }: DataTableProps) {
                         size="sm"
                         onClick={() => setCurrentPage(page)}
                         className={cn(
-                          "w-8 h-8 p-0",
+                          "w-8 h-8 p-0 cursor-pointer",
                           currentPage === page &&
                             "bg-blue-600 hover:bg-blue-700"
                         )}
@@ -594,8 +597,9 @@ export function DataTable({ data }: DataTableProps) {
                     setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                   }
                   disabled={currentPage === totalPages}
+                  className="cursor-pointer"
                 >
-                  Next
+                  <ChevronRight className="w-4 h-4" />
                 </Button>
               </div>
             </div>
